@@ -1,0 +1,29 @@
+// SyncNotes Prisma Schema
+// Database: PostgreSQL hosted on Neon
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum NoteType {
+  TEXT
+  LINK
+  IMAGE
+}
+
+model Note {
+  id        String   @id @default(uuid()) @db.Uuid
+  type      NoteType @default(TEXT)
+  content   String
+  title     String?
+  createdAt DateTime @default(now())
+  pinned    Boolean  @default(false)
+
+  @@index([createdAt(sort: Desc)])
+  @@map("notes")
+}
