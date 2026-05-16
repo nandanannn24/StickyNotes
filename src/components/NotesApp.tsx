@@ -12,6 +12,7 @@ import {
 import Header from "./Header";
 import CreateNote from "./CreateNote";
 import NoteCard from "./NoteCard";
+import ToolsPage from "./ToolsPage";
 import { ClipboardList } from "lucide-react";
 
 interface NotesAppProps {
@@ -26,6 +27,7 @@ type OptimisticAction =
 export default function NotesApp({ initialNotes }: NotesAppProps) {
   const [notes, setNotes] = useState<NoteData[]>(initialNotes);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activePage, setActivePage] = useState<"notes" | "tools">("notes");
   const [, startTransition] = useTransition();
 
   const [optimisticNotes, addOptimistic] = useOptimistic(
@@ -69,7 +71,7 @@ export default function NotesApp({ initialNotes }: NotesAppProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "n") {
         e.preventDefault();
-        // Trigger click on the FAB or desktop bar
+        setActivePage("notes");
         const btn = document.querySelector("[data-create-trigger]") as HTMLButtonElement;
         btn?.click();
       }
@@ -141,40 +143,44 @@ export default function NotesApp({ initialNotes }: NotesAppProps) {
         onRefresh={refreshNotes}
         isRefreshing={isRefreshing}
         noteCount={notes.length}
+        activePage={activePage}
+        onPageChange={setActivePage}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Create Note */}
-        <CreateNote onSubmit={handleCreate} />
+      {activePage === "notes" ? (
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <CreateNote onSubmit={handleCreate} />
 
-        {/* Notes Grid */}
-        {sortedNotes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center mb-6">
-              <ClipboardList className="w-10 h-10 text-violet-400" />
+          {sortedNotes.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center mb-6">
+                <ClipboardList className="w-10 h-10 text-violet-400" />
+              </div>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+                No notes yet
+              </h2>
+              <p className="text-sm text-[var(--text-muted)] max-w-sm">
+                Start by adding a text snippet, link, or image. Your notes sync
+                instantly across all your devices.
+              </p>
             </div>
-            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
-              No notes yet
-            </h2>
-            <p className="text-sm text-[var(--text-muted)] max-w-sm">
-              Start by adding a text snippet, link, or image. Your notes sync
-              instantly across all your devices.
-            </p>
-          </div>
-        ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4">
-            {sortedNotes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                onDelete={handleDelete}
-                onTogglePin={handleTogglePin}
-                isOptimistic={note.id.startsWith("temp-")}
-              />
-            ))}
-          </div>
-        )}
-      </main>
+          ) : (
+            <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4">
+              {sortedNotes.map((note) => (
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onDelete={handleDelete}
+                  onTogglePin={handleTogglePin}
+                  isOptimistic={note.id.startsWith("temp-")}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+      ) : (
+        <ToolsPage />
+      )}
     </div>
   );
 }

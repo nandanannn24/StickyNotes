@@ -2,7 +2,7 @@
 
 /* ===========================
    SyncNotes Design System
-   Premium dark/light theme
+   Premium dark/light theme with color presets
    =========================== */
 
 /* --- CSS Custom Properties (Dark Mode Default) --- */
@@ -25,6 +25,7 @@
 
   --accent-violet: #8b5cf6;
   --accent-fuchsia: #d946ef;
+  --accent-glow: rgba(139, 92, 246, 0.4);
 }
 
 /* --- Light Mode --- */
@@ -57,7 +58,7 @@ body {
   margin: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 /* --- Scrollbar --- */
@@ -104,10 +105,10 @@ body {
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+    box-shadow: 0 0 0 0 var(--accent-glow);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(139, 92, 246, 0);
+    box-shadow: 0 0 0 8px transparent;
   }
 }
 
@@ -125,7 +126,7 @@ body {
 
 /* --- Selection --- */
 ::selection {
-  background-color: rgba(139, 92, 246, 0.3);
+  background-color: var(--accent-glow);
   color: var(--text-primary);
 }
 
@@ -143,3 +144,32 @@ body {
 .columns-4 {
   column-gap: 1rem;
 }
+
+/* --- Range input --- */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-subtle);
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent-violet);
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+/* --- Prose minimal for Word preview --- */
+.prose h1 { font-size: 1.25rem; font-weight: 700; margin: 0.5em 0; }
+.prose h2 { font-size: 1.1rem; font-weight: 600; margin: 0.5em 0; }
+.prose p { margin: 0.4em 0; }
+.prose ul, .prose ol { padding-left: 1.5em; margin: 0.4em 0; }
+.prose table { border-collapse: collapse; width: 100%; }
+.prose td, .prose th { border: 1px solid var(--border-subtle); padding: 4px 8px; font-size: 11px; }
